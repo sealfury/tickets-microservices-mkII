@@ -1,4 +1,10 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose' 
+
+// Describes required props to create new User
+interface UserAttrs {
+  email: string
+  password: string
+}
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -13,4 +19,9 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema)
 
-export { User }
+// replaces call to new User()
+const buildUser = (attrs: UserAttrs) => {
+  return new User(attrs)
+}
+
+export { User, buildUser }
