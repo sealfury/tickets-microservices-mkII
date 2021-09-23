@@ -1,6 +1,10 @@
 # Project-wide
 /.vscode
 node_modules
-*.txt
+/.notes
+
 # Formatter wants a package.json in root dir 
-package.json
+/package.json
+
+# Client
+.next
