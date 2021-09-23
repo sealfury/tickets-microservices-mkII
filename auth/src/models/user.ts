@@ -1,5 +1,7 @@
 import mongoose from 'mongoose'
 
+import { Password } from '../utils/password'
+
 // Describes required props to create new User
 interface UserAttrs {
   email: string
@@ -15,7 +17,7 @@ interface UserModel extends mongoose.Model<UserDoc> {
 interface UserDoc extends mongoose.Document {
   email: string
   password: string
-} 
+}
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -27,16 +29,20 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
 })
+
+userSchema.pre('save', async function (done) {
+  if (this.isModified('password')) {
+    const hashed = await Password.toHash(this.get('password'))
+    this.set('password', hashed)
+  }
+  done()
+})
+
 // replaces call to new User()
 userSchema.statics.build = (attrs: UserAttrs) => {
   return new User(attrs)
 }
 
 const User = mongoose.model<UserDoc, UserModel>('User', userSchema)
-
-const user = User.build({
-  email: 'test@test.com',
-  password: 'password'
-})
 
 export { User }
