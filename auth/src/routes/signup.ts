@@ -41,7 +41,7 @@ router.post(
         id: user.id,
         email: user.email,
       },
-      'temp-private-key'
+      process.env.JWT_KEY! // type check in app start function
     )
 
     // Store it on session object
