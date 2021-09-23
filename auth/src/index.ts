@@ -33,6 +33,7 @@ app.get('*', async (req, res) => {
 app.use(errorHandler)
 
 const start = async () => {
+  // Type check for JWT_KEY in all routes
   if (!process.env.JWT_KEY) {
     throw new Error('JWT_KEY must be defined!')
   }
