@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { useState } from 'react'
 
-const useRequest = ({ url, method, body }) => {
+const useRequest = ({ url, method, body, onSuccess }) => {
   const [errors, setErrors] = useState(null)
 
   // method === 'get' | 'post' | 'put' | etc.
@@ -9,7 +9,10 @@ const useRequest = ({ url, method, body }) => {
     try {
       setErrors(null)
       const response = await axios[method](url, body)
-      return response.data
+
+      if (onSuccess) {
+        onSuccess(response.data)
+      }
     } catch (err) {
       setErrors(
         <div className='alert alert-danger'>
