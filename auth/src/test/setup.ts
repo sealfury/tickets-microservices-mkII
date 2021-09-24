@@ -4,6 +4,7 @@ import request from 'supertest'
 import { app } from '../app'
 
 // Alert TS to global signin property
+// @types/node wants this syntax now for some reason
 declare global {
   var getAuthCookie: () => Promise<string[]>
 }
