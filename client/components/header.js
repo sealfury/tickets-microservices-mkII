@@ -23,7 +23,9 @@ const Header = ({ currentUser }) => {
   return (
     <nav className='navbar navbar-dark bg-dark'>
       <Link href='/'>
-        <a className='navbar-brand'>SealTix</a>
+        <a className='navbar-brand' style={{ padding: '10px 20px;' }}>
+          SealTix
+        </a>
       </Link>
       <div className='d-flex justify-content-end'>
         <ul className='nav d-flex align-items-center'>{links}</ul>
