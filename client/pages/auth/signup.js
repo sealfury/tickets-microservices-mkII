@@ -13,7 +13,7 @@ const Signup = () => {
       email,
       password,
     },
-    onSuccess: () => Router.push('/')
+    onSuccess: () => Router.push('/'),
   })
 
   const onSubmit = async e => {
