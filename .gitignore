@@ -8,3 +8,6 @@ node_modules
 
 # Client
 .next
+
+# NPM Module - see readme for details
+common
