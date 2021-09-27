@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import request from 'supertest'
 import { app } from '../app'
 import jwt from 'jsonwebtoken'
+import { fakeId } from './utils'
 
 // Alert TS to global signin property
 // @types/node wants this syntax now for some reason
@@ -45,9 +46,9 @@ afterAll(async () => {
 
 // Global auth helper function w/o reaching out to auth service
 global.getAuthCookie = () => {
-  // Build a JWT payload
+  // Build a JWT payload w/ new id each time function is called
   const payload = {
-    id: '123abc456',
+    id: fakeId,
     email: 'mail@mail.com',
   }
 
