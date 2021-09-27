@@ -2,11 +2,12 @@ import { MongoMemoryServer } from 'mongodb-memory-server'
 import mongoose from 'mongoose'
 import request from 'supertest'
 import { app } from '../app'
+import jwt from 'jsonwebtoken'
 
 // Alert TS to global signin property
 // @types/node wants this syntax now for some reason
 declare global {
-  var getAuthCookie: () => Promise<string[]>
+  var getAuthCookie: () => string[]
 }
 
 let mongo: any
@@ -42,20 +43,26 @@ afterAll(async () => {
   await mongoose.connection.close()
 })
 
-// Global auth helper function
-global.getAuthCookie = async () => {
-  const email = 'mail@mail.com'
-  const password = 'password'
+// Global auth helper function w/o reaching out to auth service
+global.getAuthCookie = () => {
+  // Build a JWT payload
+  const payload = {
+    id: '123abc456',
+    email: 'mail@mail.com',
+  }
 
-  const response = await request(app)
-    .post('/api/users/signup')
-    .send({
-      email,
-      password,
-    })
-    .expect(201)
+  // Create the JWT
+  const token = jwt.sign(payload, process.env.JWT_KEY!)
 
-  const cookie = response.get('Set-Cookie')
+  // Build the session object { jwt: TEST_JWT }
+  const session = { jwt: token }
 
-  return cookie
+  // Turn session object into JSON
+  const sessionJSON = JSON.stringify(session)
+
+  // Take JSON and encode it as base64
+  const base64 = Buffer.from(sessionJSON).toString('base64')
+
+  // return string = cookie w/ encoded data
+  return [`express:sess=${base64}`]
 }
