@@ -4,10 +4,10 @@ import { json } from 'body-parser'
 import cookieSession from 'cookie-session'
 import { errorHandler, NotFoundError, currentUser } from '@sealtix/common'
 
-import { createTicketRouter } from './routes/new'
-import { showTicketRouter } from './routes/show'
-import { indexTicketRouter } from './routes/index'
-import { updateTicketRouter } from './routes/update'
+import { deleteOrderRouter } from './routes/delete'
+import { indexOrderRouter } from './routes/index'
+import { createOrderRouter } from './routes/new'
+import { showOrderRouter } from './routes/show'
 
 const app = express()
 app.set('trust proxy', true) // trust ingress-nginx
@@ -20,10 +20,10 @@ app.use(
 )
 app.use(currentUser)
 
-app.use(createTicketRouter)
-app.use(showTicketRouter)
-app.use(indexTicketRouter)
-app.use(updateTicketRouter)
+app.use(deleteOrderRouter)
+app.use(indexOrderRouter)
+app.use(createOrderRouter)
+app.use(showOrderRouter)
 
 app.all('*', async (req, res) => {
   throw new NotFoundError()
