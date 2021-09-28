@@ -26,13 +26,13 @@ router.post(
       userId: req.currentUser!.id,
     })
     await ticket.save()
-    
-    new TicketCreatedPublisher(client).publish({
-      id: ticket.id,
-      title: ticket.title,
-      price: ticket.price,
-      userId: ticket.userId
-    })
+
+    // new TicketCreatedPublisher(client).publish({
+    //   id: ticket.id,
+    //   title: ticket.title,
+    //   price: ticket.price,
+    //   userId: ticket.userId
+    // })
 
     res.status(201).send(ticket)
   }
