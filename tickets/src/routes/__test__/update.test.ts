@@ -107,7 +107,7 @@ it('should update the ticket when the user provides valid inputs', async () => {
     .get(`/api/tickets/${response.body.id}`)
     .send()
 
-  expect(ticketRes.body.title).toEqual('new title')
+  expect(ticketRes.body.title).toEqual('new ticket')
   expect(ticketRes.body.price).toEqual(50)
 })
 
