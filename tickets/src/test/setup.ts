@@ -11,6 +11,9 @@ declare global {
   var getAuthCookie: () => string[]
 }
 
+// mock natsWrapper client in all tests
+jest.mock('../nats-wrapper')
+
 let mongo: any
 // mock mongo db
 beforeAll(async () => {
@@ -31,6 +34,7 @@ beforeAll(async () => {
 
 // reset data in DB before each new test
 beforeEach(async () => {
+  jest.clearAllMocks()
   const collections = await mongoose.connection.db.collections()
 
   for (let collection of collections) {
