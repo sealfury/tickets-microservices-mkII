@@ -3,6 +3,8 @@ import { OrderStatus } from '@sealtix/common'
 
 import { TicketDoc } from './ticket'
 
+export { OrderStatus }
+
 interface OrderAttrs {
   userId: string
   status: OrderStatus
@@ -31,7 +33,7 @@ const orderSchema = new mongoose.Schema(
       type: String,
       required: true,
       enum: Object.values(OrderStatus),
-      default: OrderStatus.Created,
+      // default: OrderStatus.Created,
     },
     expiresAt: {
       type: mongoose.Schema.Types.Date,
