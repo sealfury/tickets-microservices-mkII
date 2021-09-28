@@ -1,5 +1,5 @@
 # Project-wide
-/.vscode
+.vscode
 node_modules
 /.notes
 
@@ -11,3 +11,6 @@ node_modules
 
 # NPM Module - see readme for details
 common
+
+# Test project to work on nats concepts
+nats-test

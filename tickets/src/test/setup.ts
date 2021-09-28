@@ -3,13 +3,15 @@ import mongoose from 'mongoose'
 import request from 'supertest'
 import { app } from '../app'
 import jwt from 'jsonwebtoken'
-import { fakeId } from './utils'
 
 // Alert TS to global signin property
 // @types/node wants this syntax now for some reason
 declare global {
   var getAuthCookie: () => string[]
 }
+
+// mock natsWrapper client in all tests
+jest.mock('../nats-wrapper')
 
 let mongo: any
 // mock mongo db
@@ -31,6 +33,7 @@ beforeAll(async () => {
 
 // reset data in DB before each new test
 beforeEach(async () => {
+  jest.clearAllMocks()
   const collections = await mongoose.connection.db.collections()
 
   for (let collection of collections) {
@@ -48,7 +51,7 @@ afterAll(async () => {
 global.getAuthCookie = () => {
   // Build a JWT payload w/ new id each time function is called
   const payload = {
-    id: fakeId,
+    id: new mongoose.Types.ObjectId().toHexString(),
     email: 'mail@mail.com',
   }
 

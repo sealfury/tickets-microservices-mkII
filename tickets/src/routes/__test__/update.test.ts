@@ -1,6 +1,7 @@
 import request from 'supertest'
 import { app } from '../../app'
 import { fakeId } from '../../test/utils'
+import { natsWrapper } from '../../nats-wrapper'
 
 it('should return a 404 if the provided id does not exist', async () => {
   await request(app)
@@ -106,6 +107,29 @@ it('should update the ticket when the user provides valid inputs', async () => {
     .get(`/api/tickets/${response.body.id}`)
     .send()
 
-  expect(ticketRes.body.title).toEqual('new title')
+  expect(ticketRes.body.title).toEqual('new ticket')
   expect(ticketRes.body.price).toEqual(50)
+})
+
+it('should publish an event upon ticket update', async () => {
+  const cookie = global.getAuthCookie()
+
+  const response = await request(app)
+    .post('/api/tickets')
+    .set('Cookie', cookie)
+    .send({
+      title: 'testTicket',
+      price: 20,
+    })
+
+  await request(app)
+    .put(`/api/tickets/${response.body.id}`)
+    .set('Cookie', cookie)
+    .send({
+      title: 'new ticket',
+      price: 50,
+    })
+    .expect(200)
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled()
 })
