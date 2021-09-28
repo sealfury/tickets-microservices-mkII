@@ -19,6 +19,14 @@ const start = async () => {
       'randomString',
       'http://nats-srv:4222'
     )
+    // Graceful shutdown
+    natsWrapper.client.on('close', () => {
+      console.log('NATS connection closed')
+      process.exit()
+    })
+    process.on('SIGINT', () => natsWrapper.client.close())
+    process.on('SIGTERM', () => natsWrapper.client.close())
+
     await mongoose.connect(process.env.MONGO_URI)
     console.log('Connected to MongoDB')
   } catch (err) {
