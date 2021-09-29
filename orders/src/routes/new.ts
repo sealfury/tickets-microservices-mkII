@@ -11,6 +11,8 @@ import {
 
 import { Ticket } from '../models/ticket'
 import { Order } from '../models/order'
+import { OrderCreatedPublisher } from '../events/publishers'
+import { natsWrapper } from '../nats-wrapper'
 
 const router = express.Router()
 
@@ -59,7 +61,18 @@ router.post(
     })
     await order.save()
 
-    // TODO: Publish an order created event
+    // Publish an order created event
+    new OrderCreatedPublisher(natsWrapper.client).publish({
+      id: order.id,
+      status: order.status,
+      userId: order.userId,
+      // time-zone agnostic date string
+      expiresAt: order.expiresAt.toISOString(),
+      ticket: {
+        id: ticket.id,
+        price: ticket.price,
+      },
+    })
 
     res.status(201).send(order)
   }

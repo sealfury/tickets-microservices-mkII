@@ -3,6 +3,7 @@ import request from 'supertest'
 import { app } from '../../app'
 import { Order, OrderStatus } from '../../models/order'
 import { Ticket } from '../../models/ticket'
+import { natsWrapper } from '../../nats-wrapper'
 
 it('should return an error if the ticket being ordered does not exist', async () => {
   const ticketId = new mongoose.Types.ObjectId()
@@ -38,7 +39,7 @@ it('should return an error if the ticket being ordered is already reserved', asy
     .expect(400)
 })
 
-it('successfully reserves a ticket', async () => {
+it('should successfully reserves a ticket when conditions are met', async () => {
   const ticket = Ticket.build({
     title: 'testTicket',
     price: 20,
@@ -52,4 +53,18 @@ it('successfully reserves a ticket', async () => {
     .expect(201)
 })
 
-it.todo('should emit an order created event upon order creation')
+it('should emit an order created event upon order creation', async () => {
+  const ticket = Ticket.build({
+    title: 'testTicket',
+    price: 20,
+  })
+  await ticket.save()
+
+  await request(app)
+    .post('/api/orders')
+    .set('Cookie', global.getAuthCookie())
+    .send({ ticketId: ticket.id })
+    .expect(201)
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled()
+})
