@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import request from 'supertest'
 import { app } from '../../app'
 import { Ticket } from '../../models/ticket'
@@ -5,6 +6,7 @@ import { Ticket } from '../../models/ticket'
 it('should successfully fetch the order', async () => {
   // Create a ticket
   const ticket = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
     title: 'testTicket',
     price: 20,
   })
@@ -32,6 +34,7 @@ it('should successfully fetch the order', async () => {
 it('should return a 401 if the user tries to fetch an order of a different user', async () => {
   // Create a ticket
   const ticket = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
     title: 'testTicket',
     price: 20,
   })

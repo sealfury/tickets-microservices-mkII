@@ -64,10 +64,10 @@ router.post(
     // Publish an order created event
     new OrderCreatedPublisher(natsWrapper.client).publish({
       id: order.id,
+      version: order.version,
       status: order.status,
       userId: order.userId,
-      // time-zone agnostic date string
-      expiresAt: order.expiresAt.toISOString(),
+      expiresAt: order.expiresAt.toISOString(), // time-zone agnostic date string
       ticket: {
         id: ticket.id,
         price: ticket.price,
