@@ -19,6 +19,7 @@ interface TicketModel extends mongoose.Model<TicketDoc> {
   build(attrs: TicketAttrs): TicketDoc
 
   // abstract find by ID and previous version method
+  // see concurrency notes for implementation w/o plugin
   findByEvent(event: { id: string; version: number }): Promise<TicketDoc | null>
 }
 
