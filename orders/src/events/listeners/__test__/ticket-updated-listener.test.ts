@@ -55,3 +55,16 @@ it('should successfully ack the message when event is processed', async () => {
 
   expect(msg.ack).toHaveBeenCalled()
 })
+
+it('should not call the ack function if the event has an incongruent version number', async () => {
+  const { msg, data, listener } = await setup()
+
+  data.version = 7
+
+  // should throw error in listener
+  try {
+    await listener.onMessage(data, msg)
+  } catch (err) {}
+
+  expect(msg.ack).not.toHaveBeenCalled()
+})
