@@ -17,6 +17,9 @@ export interface TicketDoc extends mongoose.Document {
 
 interface TicketModel extends mongoose.Model<TicketDoc> {
   build(attrs: TicketAttrs): TicketDoc
+
+  // abstract find by ID and previous version method
+  findByEvent(event: { id: string; version: number }): Promise<TicketDoc | null>
 }
 
 const ticketSchema = new mongoose.Schema(
@@ -44,6 +47,13 @@ const ticketSchema = new mongoose.Schema(
 // normalize '__v' property to 'version'
 ticketSchema.set('versionKey', 'version')
 ticketSchema.plugin(updateIfCurrent)
+
+ticketSchema.statics.findByEvent = (event: { id: string; version: number }) => {
+  return Ticket.findOne({
+    _id: event.id,
+    version: event.version - 1,
+  })
+}
 
 ticketSchema.statics.build = (attrs: TicketAttrs) => {
   return new Ticket({
