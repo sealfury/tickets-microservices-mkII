@@ -29,7 +29,7 @@ it('effectivley implements optimistic concurrency control functionality', async 
     return
   }
 
-  throw new Error('You best done not come up in here boi')
+  throw new Error('Should never reach this point!')
 })
 
 it('should increment the version number upon multipe saves', async () => {
