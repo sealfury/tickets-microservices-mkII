@@ -2,7 +2,10 @@ import mongoose from 'mongoose'
 
 import { app } from './app'
 import { natsWrapper } from './nats-wrapper'
-import { OrderCreatedListener, OrderCancelledListener } from './events/listeners'
+import {
+  OrderCreatedListener,
+  OrderCancelledListener,
+} from './events/listeners'
 
 const start = async () => {
   // Type check for JWT_KEY in all routes
