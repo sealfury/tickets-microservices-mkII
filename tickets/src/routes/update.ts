@@ -5,10 +5,11 @@ import {
   requireAuth,
   NotFoundError,
   NotAuthorizedError,
+  BadRequestError,
 } from '@sealtix/common'
 
 import { Ticket } from '../models/ticket'
-import { TicketUpdatedPublisher } from '../events/publishers/ticket-updated-publisher'
+import { TicketUpdatedPublisher } from '../events/publishers'
 import { natsWrapper } from '../nats-wrapper'
 
 const router = express.Router()
@@ -30,6 +31,11 @@ router.put(
       throw new NotFoundError()
     }
 
+    // prevent edits on reserved tickets
+    if (ticket.orderId) {
+      throw new BadRequestError('Cannot edit a ticket that has been reserved')
+    }
+
     if (ticket.userId !== req.currentUser!.id) {
       throw new NotAuthorizedError()
     }
@@ -43,6 +49,7 @@ router.put(
     // Emit updated event
     new TicketUpdatedPublisher(natsWrapper.client).publish({
       id: ticket.id,
+      version: ticket.version,
       title: ticket.title,
       price: ticket.price,
       userId: ticket.userId,
