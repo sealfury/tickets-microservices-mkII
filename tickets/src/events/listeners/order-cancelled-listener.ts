@@ -1,25 +1,25 @@
 import { Message } from 'node-nats-streaming'
-import { Listener, OrderCreatedEvent, Subjects } from '@sealtix/common'
+import { Listener, OrderCancelledEvent, Subjects } from '@sealtix/common'
 
 import { queueGroupName } from './queue-group-name'
 import { Ticket } from '../../models/ticket'
 import { TicketUpdatedPublisher } from '../publishers'
 
-export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
-  readonly subject = Subjects.OrderCreated
+export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
+  readonly subject = Subjects.OrderCancelled
   queueGroupName = queueGroupName
 
-  async onMessage(data: OrderCreatedEvent['data'], msg: Message) {
+  async onMessage(data: OrderCancelledEvent['data'], msg: Message) {
     const ticket = await Ticket.findById(data.ticket.id)
 
     if (!ticket) {
       throw new Error('Ticket not found!')
     }
 
-    // Mark ticket as reserved by setting orderId
-    ticket.set({ orderId: data.id })
+    // prefer undefined over null for optional values in ts
+    ticket.set({ orderId: undefined })
+    await ticket.save()
 
-    // Inform related services of versioning
     await new TicketUpdatedPublisher(this.client).publish({
       id: ticket.id,
       version: ticket.version,
@@ -28,8 +28,6 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
       userId: ticket.userId,
       orderId: ticket.orderId,
     })
-
-    await ticket.save()
 
     msg.ack()
   }
