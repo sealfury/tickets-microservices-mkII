@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import { app } from './app'
 import { natsWrapper } from './nats-wrapper'
 import {
+  ExpirationCompleteListener,
   TicketCreatedListener,
   TicketUpdatedListener,
 } from './events/listeners'
@@ -41,8 +42,10 @@ const start = async () => {
     process.on('SIGINT', () => natsWrapper.client.close())
     process.on('SIGTERM', () => natsWrapper.client.close())
 
+    // initialize listeners
     new TicketCreatedListener(natsWrapper.client).listen()
     new TicketUpdatedListener(natsWrapper.client).listen()
+    new ExpirationCompleteListener(natsWrapper.client).listen()
 
     await mongoose.connect(process.env.MONGO_URI)
     console.log('Connected to MongoDB')
