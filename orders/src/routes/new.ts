@@ -15,8 +15,8 @@ import { OrderCreatedPublisher } from '../events/publishers'
 import { natsWrapper } from '../nats-wrapper'
 
 const router = express.Router()
-
-const EXPIRATION_WINDOW_SECONDS = 15 * 60
+// TODO - Bump this back up to 15/20 mins when expiration srv is finished
+const EXPIRATION_WINDOW_SECONDS = 1 * 60
 
 router.post(
   '/api/orders',
