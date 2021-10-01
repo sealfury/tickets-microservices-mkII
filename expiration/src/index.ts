@@ -1,6 +1,6 @@
 import { natsWrapper } from './nats-wrapper'
 
-import { OrderCreatedListener } from './events/listeners/order-created-listener'
+import { OrderCreatedListener } from './events/listeners'
 
 const start = async () => {
   // Type checks for NATS env variables

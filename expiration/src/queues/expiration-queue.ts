@@ -1,5 +1,8 @@
 import Queue from 'bull'
 
+import { ExpirationCompletePublisher } from '../events/publishers'
+import { natsWrapper } from '../nats-wrapper'
+
 interface JobPayload {
   orderId: string
 }
@@ -11,8 +14,10 @@ const expirationQueue = new Queue<JobPayload>('order:expiration', {
 })
 
 expirationQueue.process(async job => {
-  console.log(`publish an event for order id ${job.data.orderId}`)
   // publish expiration:complete event
+  new ExpirationCompletePublisher(natsWrapper.client).publish({
+    orderId: job.data.orderId,
+  })
 })
 
 export { expirationQueue }
