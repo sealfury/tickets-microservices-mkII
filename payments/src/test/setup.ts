@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 // Alert TS to global signin property
 // @types/node wants this syntax now for some reason
 declare global {
-  var getAuthCookie: () => string[]
+  var getAuthCookie: (id?: string) => string[]
 }
 
 // mock natsWrapper client in all tests
@@ -46,10 +46,10 @@ afterAll(async () => {
 })
 
 // Global auth helper function w/o reaching out to auth service
-global.getAuthCookie = () => {
+global.getAuthCookie = (id?: string) => {
   // Build a JWT payload w/ new id each time function is called
   const payload = {
-    id: new mongoose.Types.ObjectId().toHexString(),
+    id: id || new mongoose.Types.ObjectId().toHexString(),
     email: 'mail@mail.com',
   }
 
