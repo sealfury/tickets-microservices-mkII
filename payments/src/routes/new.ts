@@ -10,7 +10,7 @@ import {
 } from '@sealtix/common'
 
 import { stripe } from '../stripe'
-import { Order } from '../models/order'
+import { Order, Payment } from '../models'
 
 const router = express.Router()
 
@@ -45,12 +45,17 @@ router.post(
       )
     }
 
-    await stripe.charges.create({
+    const charge = await stripe.charges.create({
       currency: 'usd',
       amount: order.price * 100, // price in cents
       source: token,
       description: `Purchase of ticket from ticketing.dev`,
     })
+    const payment = Payment.build({
+      orderId,
+      stripeId: charge.id,
+    })
+    await payment.save()
 
     res.status(201).send({ success: true })
   }

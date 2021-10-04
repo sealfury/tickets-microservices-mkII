@@ -1,7 +1,7 @@
 import request from 'supertest'
 import mongoose from 'mongoose'
 import { app } from '../../app'
-import { Order } from '../../models/order'
+import { Order } from '../../models'
 import { OrderStatus } from '@sealtix/common'
 import { stripe } from '../../stripe'
 
