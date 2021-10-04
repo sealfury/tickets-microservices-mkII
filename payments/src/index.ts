@@ -3,10 +3,8 @@ import mongoose from 'mongoose'
 import { app } from './app'
 import { natsWrapper } from './nats-wrapper'
 import {
-  ExpirationCompleteListener,
-  TicketCreatedListener,
-  TicketUpdatedListener,
-  PaymentCreatedListener
+  OrderCancelledListener,
+  OrderCreatedListener,
 } from './events/listeners'
 
 const start = async () => {
@@ -43,11 +41,9 @@ const start = async () => {
     process.on('SIGINT', () => natsWrapper.client.close())
     process.on('SIGTERM', () => natsWrapper.client.close())
 
-    // initialize listeners
-    new TicketCreatedListener(natsWrapper.client).listen()
-    new TicketUpdatedListener(natsWrapper.client).listen()
-    new ExpirationCompleteListener(natsWrapper.client).listen()
-    new PaymentCreatedListener(natsWrapper.client).listen()
+    // Listen for order events
+    new OrderCreatedListener(natsWrapper.client).listen()
+    new OrderCancelledListener(natsWrapper.client).listen()
 
     await mongoose.connect(process.env.MONGO_URI)
     console.log('Connected to MongoDB')
@@ -56,7 +52,7 @@ const start = async () => {
   }
 
   app.listen(3000, () => {
-    console.log('Orders Service listening on port 3000...')
+    console.log('Payments Service listening on port 3000...')
   })
 }
 
