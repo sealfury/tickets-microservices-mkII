@@ -2,6 +2,7 @@
 .vscode
 node_modules
 /.notes
+.env*
 
 # Formatter wants a package.json in root dir 
 /package.json
