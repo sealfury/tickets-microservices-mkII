@@ -16,7 +16,7 @@ const TicketShow = ({ ticket }) => {
       <h2>{ticket.title}</h2>
       <h4>Price: ${ticket.price}</h4>
       {errors}
-      <button className='btn btn-primary' onClick={makeRequest}>
+      <button className='btn btn-primary' onClick={() => makeRequest()}>
         Purchase!
       </button>
     </div>
