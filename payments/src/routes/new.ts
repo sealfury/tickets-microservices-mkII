@@ -52,7 +52,7 @@ router.post(
       description: `Purchase of ticket from ticketing.dev`,
     })
 
-    res.send({ success: true })
+    res.status(201).send({ success: true })
   }
 )
 
