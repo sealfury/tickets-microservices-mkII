@@ -4,11 +4,12 @@ import { useState } from 'react'
 const useRequest = ({ url, method, body, onSuccess }) => {
   const [errors, setErrors] = useState(null)
 
-  // method === 'get' | 'post' | 'put' | etc. (i.e. lowercase)
-  const makeRequest = async () => {
+  const makeRequest = async (props = {}) => {
     try {
       setErrors(null)
-      const response = await axios[method](url, body)
+      // method === 'get' | 'post' | 'put' | etc. (i.e. lowercase)
+      // merge fn input props with body props
+      const response = await axios[method](url, { ...body, ...props })
 
       if (onSuccess) {
         onSuccess(response.data)
