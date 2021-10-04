@@ -1,10 +1,12 @@
 import Link from 'next/link'
 
 const Header = ({ currentUser }) => {
-  // [{}, {}, false ] || [false, false, {}] then filter false
+  // [] containing {} or false; filter false
   const links = [
     !currentUser && { label: 'Sign Up', href: '/auth/signup' },
     !currentUser && { label: 'Sign In', href: '/auth/signin' },
+    currentUser && { label: 'Sell Ticket(s)', href: '/tickets/new' },
+    currentUser && { label: 'My Orders', href: '/orders' },
     currentUser && { label: 'Sign Out', href: '/auth/signout' },
   ]
     .filter(linkConfig => linkConfig)
