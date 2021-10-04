@@ -10,7 +10,9 @@ import {
 } from '@sealtix/common'
 
 import { stripe } from '../stripe'
+import { natsWrapper } from '../nats-wrapper'
 import { Order, Payment } from '../models'
+import { PaymentCreatedPublisher } from '../events/publishers'
 
 const router = express.Router()
 
@@ -57,7 +59,15 @@ router.post(
     })
     await payment.save()
 
-    res.status(201).send({ success: true })
+    // send response ASAP (perhaps before event) to streamline
+    // UX for the time being
+    new PaymentCreatedPublisher(natsWrapper.client).publish({
+      id: payment.id,
+      orderId: payment.orderId,
+      stripeId: payment.stripeId,
+    })
+
+    res.status(201).send({ id: payment.id })
   }
 )
 
