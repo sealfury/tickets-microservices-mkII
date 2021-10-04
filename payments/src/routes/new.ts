@@ -9,6 +9,7 @@ import {
   OrderStatus,
 } from '@sealtix/common'
 
+import { stripe } from '../stripe'
 import { Order } from '../models/order'
 
 const router = express.Router()
@@ -43,6 +44,13 @@ router.post(
         'You cannot pay for an order that has been cancelled'
       )
     }
+
+    await stripe.charges.create({
+      currency: 'usd',
+      amount: order.price * 100, // price in cents
+      source: token,
+      description: `Purchase of ticket from ticketing.dev`,
+    })
 
     res.send({ success: true })
   }
