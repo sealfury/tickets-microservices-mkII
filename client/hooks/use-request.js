@@ -4,7 +4,7 @@ import { useState } from 'react'
 const useRequest = ({ url, method, body, onSuccess }) => {
   const [errors, setErrors] = useState(null)
 
-  // method === 'get' | 'post' | 'put' | etc.
+  // method === 'get' | 'post' | 'put' | etc. (i.e. lowercase)
   const makeRequest = async () => {
     try {
       setErrors(null)
