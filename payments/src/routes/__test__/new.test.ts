@@ -1,7 +1,7 @@
 import request from 'supertest'
 import mongoose from 'mongoose'
 import { app } from '../../app'
-import { Order } from '../../models'
+import { Order, Payment } from '../../models'
 import { OrderStatus } from '@sealtix/common'
 import { stripe } from '../../stripe'
 
@@ -61,11 +61,11 @@ it('should return a 400 when user attempts to purchase a cancelled order', async
     .expect(400)
 })
 
-it('should return a 204 with valid inputs to charge event', async () => {
+it('should return a 201 with valid inputs to charge event', async () => {
   const userId = randomId
   const order = Order.build({
     id: randomId,
-    userId: randomId,
+    userId,
     version: 0,
     price: 20,
     status: OrderStatus.Created,
@@ -82,8 +82,19 @@ it('should return a 204 with valid inputs to charge event', async () => {
     .expect(201)
 
   const chargeOptions = (stripe.charges.create as jest.Mock).mock.calls[0][0]
+  const chargeResult = await (stripe.charges.create as jest.Mock).mock
+    .results[0].value
 
   expect(chargeOptions.source).toEqual('tok_visa')
   expect(chargeOptions.amount).toEqual(20 * 100)
   expect(chargeOptions.currency).toEqual('usd')
+
+  const payment = await Payment.findOne({
+    orderId: order.id,
+    stripeId: chargeResult.id,
+  })
+
+  expect(payment).toBeDefined()
+  expect(payment!.orderId).toEqual(order.id)
+  expect(payment!.stripeId).toEqual(chargeResult.id)
 })
