@@ -15,7 +15,7 @@ app.use(json())
 app.use(
   cookieSession({
     signed: false, // will encrypt w/ JWT instead
-    secure: process.env.NODE_ENV !== 'test',
+    secure: false,
   })
 )
 app.use(currentUser)
