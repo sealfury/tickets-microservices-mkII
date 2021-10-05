@@ -8,7 +8,7 @@ it('should respond with details about the current user', async () => {
     .get('/api/users/currentuser')
     .set('Cookie', cookie)
     .send()
-    .expect(200)
+    .expect(400) // change this back to 200
 
   expect(response.body.currentUser.email).toEqual('mail@mail.com')
 })
@@ -20,4 +20,4 @@ it('should respond with null if not authenticated', async () => {
     .expect(200)
 
   expect(response.body.currentUser).toEqual(null)
-});
+})
