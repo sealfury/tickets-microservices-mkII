@@ -20,4 +20,4 @@ it('should respond with null if not authenticated', async () => {
     .expect(200)
 
   expect(response.body.currentUser).toEqual(null)
-});
+})
